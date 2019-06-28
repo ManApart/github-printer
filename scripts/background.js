@@ -1,5 +1,5 @@
 
-var sampleData = [{
+var origSampleData = [{
     epic: "Core Enhancements",
     estimate: "",
     feature: "Data Platform 2.2",
@@ -28,11 +28,17 @@ var sampleData = [{
     title: "Move valkyrie chart to charts repo"
 }]
 
+var sampleData = origSampleData
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "update") {
         console.log('background')
         console.log(request)
-        sampleData = request.cards
+        if (sampleData == origSampleData) {
+            sampleData = request.cards
+        } else {
+            sampleData = origSampleData
+        }
     }
 
     sendResponse(sampleData);
