@@ -31,14 +31,11 @@ var origSampleData = [{
 var sampleData = origSampleData
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.action == "reset") {
+        sampleData = origSampleData
+    }
     if (request.action == "update") {
-        console.log('background')
-        console.log(request)
-        if (sampleData == origSampleData) {
-            sampleData = request.cards
-        } else {
-            sampleData = origSampleData
-        }
+        sampleData = request.cards
     }
 
     sendResponse(sampleData);
