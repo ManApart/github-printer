@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     cardProps = activeCardDivs.map(getCardProperties)
     console.log(cardProps)
 
-    sendResponse({ success: true });
+    sendResponse({ response: "message" });
 });
 
 getActiveCards = function () {
