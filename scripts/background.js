@@ -35,9 +35,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "reset") {
         sampleData = origSampleData
     }
-    if (request.action == "update") {
-        sampleData = request.cards
-    }
     if (request.action == "print") {
         sampleData = request.cards
         chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });

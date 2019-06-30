@@ -1,16 +1,15 @@
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log("something happening from the extension");
 
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('on load')
+    addPrintButton()
+})
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "insert") {
         addPrintButton()
     }
 
-
-    activeCardDivs = getActiveCards()
-    cardProps = activeCardDivs.map(getCardProperties)
-    console.log(cardProps)
-
-    sendResponse({ cards: cardProps });
+    sendResponse({ cards: updateCards() });
 });
 
 updateCards = function () {
@@ -50,9 +49,11 @@ getInnerText = function (div) {
 addPrintButton = function () {
     console.log("insert action");
 
-    var printButtonText = ` <div class="zhc-menu-bar-item"><button id="print-button" class="zhc-btn zhc-btn--has-text zhc-btn--secondary" type="button"><div class="zhc-btn__content "><span>Print</span></div></button></div>`
+    var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" >Print</button>`
 
-    var menuBar = document.getElementsByClassName('zhc-menu-bar')[0]
+    // var printButtonText = ` <div class="zhc-menu-bar-item"><button id="print-button" class="zhc-btn zhc-btn--has-text zhc-btn--secondary" type="button"><div class="zhc-btn__content "><span>Print</span></div></button></div>`
+
+    var menuBar = document.getElementsByClassName('hx_reponav')[0]
     console.log(menuBar)
     menuBar.innerHTML = menuBar.innerHTML + printButtonText
 
@@ -66,8 +67,13 @@ addPrintButton = function () {
 
 
 updateAndPrint = function () {
-    console.log('update and print')
     var cards = updateCards()
-    chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) {
-    });
+    if (cards.length > 0) {
+        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) {
+        });
+    } else {
+        alert('No cards to print!')
+    }
 }
+
+addPrintButton()
