@@ -1,16 +1,28 @@
+addPrintButton = function () {
+    console.log("insert action");
 
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('on load')
-    addPrintButton()
-})
+    var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" >Print</button>`
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action == "insert") {
-        addPrintButton()
+    var menuBar = document.getElementsByClassName('hx_reponav')[0]
+    console.log(menuBar)
+    menuBar.innerHTML = menuBar.innerHTML + printButtonText
+
+    var printButton = document.getElementById("print-button")
+
+    printButton.addEventListener('click', function () {
+        updateAndPrint()
+    });
+}
+
+updateAndPrint = function () {
+    var cards = updateCards()
+    if (cards.length > 0) {
+        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) {
+        });
+    } else {
+        alert('No cards to print!')
     }
-
-    sendResponse({ cards: updateCards() });
-});
+}
 
 updateCards = function () {
     activeCardDivs = getActiveCards()
@@ -43,37 +55,6 @@ getInnerText = function (div) {
         return div.innerText
     }
     return ""
-}
-
-
-addPrintButton = function () {
-    console.log("insert action");
-
-    var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" >Print</button>`
-
-    // var printButtonText = ` <div class="zhc-menu-bar-item"><button id="print-button" class="zhc-btn zhc-btn--has-text zhc-btn--secondary" type="button"><div class="zhc-btn__content "><span>Print</span></div></button></div>`
-
-    var menuBar = document.getElementsByClassName('hx_reponav')[0]
-    console.log(menuBar)
-    menuBar.innerHTML = menuBar.innerHTML + printButtonText
-
-    var printButton = document.getElementById("print-button")
-
-    printButton.addEventListener('click', function () {
-        updateAndPrint()
-    });
-
-}
-
-
-updateAndPrint = function () {
-    var cards = updateCards()
-    if (cards.length > 0) {
-        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) {
-        });
-    } else {
-        alert('No cards to print!')
-    }
 }
 
 addPrintButton()

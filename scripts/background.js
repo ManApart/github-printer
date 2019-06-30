@@ -31,7 +31,6 @@ var origSampleData = [{
 var sampleData = origSampleData
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log('messgae recieved')
     if (request.action == "reset") {
         sampleData = origSampleData
     }
