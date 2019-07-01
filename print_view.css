@@ -1,7 +1,96 @@
 body {
-    background-color: rgb(245, 236, 237);
+    width: 500px;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+div {
+    padding: 4px;
+}
+
+.headerStory, .headerBug, .headerForecast, .headerSpike, .headerEpic {
+    border-bottom: 4px;
+    border-bottom-style: solid;
+}
+
+.typeStory, .typeSpike, .typeBug, .typeForecast, .typeEpic,
+.estimateStory, .estimateForecast, .estimateSpike, .estimateBug, .estimateEpic {
+    height: 76px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.estimateStory, .estimateForecast, .estimateSpike, .estimateBug, .estimateEpic {
+    line-height: 72px;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+}
+
+.typeStory, .typeForecast, .typeSpike, .typeBug, .typeEpic {
+    float: left;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    text-align: center;
+    width: 20px;
+    font-weight: bolder;
+}
+.typeStory, .estimateStory, .headerStory {
+    color: rgb(0,96,0);
+} 
+.typeStory, .estimateStory {
+    background-color: rgb(192,255,192);
+} 
+.typeForecast, .estimateForecast, .headerForecast {
+    color: rgb(0,0,192);
+}
+.typeForecast, .estimateForecast {
+    background-color: rgb(192,192,255);
+}
+.typeEpic, .headerEpic {
+    color: rgb(112,64,180);
+}
+.typeEpic {
+    background-color: rgb(180,160,255);
+}
+.typeSpike, .headerSpike {
+    color: rgb(160,96,32);
+}
+.typeSpike {
+    background-color: rgb(255,224,160);
+}
+.typeBug, .headerBug {
+    color: rgb(128,0,0);
+}
+.typeBug {
+    background-color: rgb(255,192,192);
+}
+
+.cardID, .labels, .epic {
+    float: left;
+    width: 78%;
+}
+.cardID {
+    font-size: 20px;
+    font-weight: bold;
+}
+.epic {
+    font-style: oblique;
 }
 
 .title {
-    background-color: blue;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 8px;
+}
+
+.description {
+    padding: 8px;
+}
+
+.card {
+    border-width: 4px;
+    border-style: solid;
+    border-color: lightgray;
+    height: 310px;
 }
