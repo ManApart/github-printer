@@ -40,6 +40,7 @@ getCardProperties = function (cardHtml) {
     card = {}
     card.owner = getInnerText(document.getElementsByClassName('author')[0])
     card.title = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-title')[0])
+    card.description = ""
     card.number = numberText
     card.repoName = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__repo-name')[0])
     card.estimate = getInnerText(cardHtml.getElementsByClassName('zhc-badge__value')[0])
