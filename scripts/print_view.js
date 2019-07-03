@@ -49,7 +49,7 @@ function createDiv(card) {
             break;
     }
 
-    theCard += `<div class='cardID'>${card.repoName} ${card.number}</div>`;
+    theCard += `<div class='cardID'><a href="https://github.com/${card.owner}/${card.repoName}/issues/${card.number}" target="_blank">${card.repoName} #${card.number}</a></div>`;
     theCard += `<div class='epic'>Epic: ${card.epic}</div>`;
     theCard += `<div class='labels'>Labels: ${card.labels}</div>`;
 
@@ -73,7 +73,7 @@ function createDiv(card) {
 
     theCard += `</div>` // header
     theCard += `<div class='title'>${card.title}</div>`;
-    theCard += `<div class='description'>${card.description}</div>`
+    theCard += `<div class='description'>${card.description.replace(/\n/g, "<br/>")}</div>`
     theCard += `</div>` // card
 
     return theCard;

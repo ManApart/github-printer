@@ -8,6 +8,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             console.log('returning cards')
             chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
         })
+            .catch(function (err) {
+                alert('Error Fetching card descriptions!')
+                console.log(err)
+                chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
+            });
     } else {
         console.log(request)
     }
@@ -15,22 +20,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 addDescriptions = function (cards) {
-    console.log('add descriptions')
     var description = cardDescription(cards[0])
-    // return Promise.all([description])
     return Promise.all(cards.map(card => cardDescription(card)))
+    // return Promise.all([description])
 }
 
 cardDescription = function (card) {
     return new Promise(function (resolve, reject) {
-        var issueNumber = card.number.substr(1, card.number.length - 1)
-        fetch(`https://api.github.com/repos/${card.owner}/${card.repoName}/issues/${issueNumber}`).then(function (response) {
+        fetch(`https://api.github.com/repos/${card.owner}/${card.repoName}/issues/${card.number}`).then(function (response) {
             response.json().then(function (data) {
-                console.log(data)
                 card.description = data.body
-                setTimeout(function () {
-                    resolve(card)
-                }, 1000)
+                resolve(card)
             })
         })
     })

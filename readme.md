@@ -8,7 +8,5 @@
 
 ## TODO
 
-- Text overflow
-- Respect newlines etc in description
-- Make issue linkable?
 - Print button instant feedback / loading?
+- Error handling

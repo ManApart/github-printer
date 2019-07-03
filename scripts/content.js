@@ -32,10 +32,15 @@ getActiveCards = function () {
 }
 
 getCardProperties = function (cardHtml) {
+    var numberText = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-number')[0])
+    if (numberText.length > 1) {
+        numberText = numberText.substr(1, numberText.length - 1)
+    }
+
     card = {}
     card.owner = getInnerText(document.getElementsByClassName('author')[0])
     card.title = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-title')[0])
-    card.number = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-number')[0])
+    card.number = numberText
     card.repoName = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__repo-name')[0])
     card.estimate = getInnerText(cardHtml.getElementsByClassName('zhc-badge__value')[0])
     card.sprint = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__milestone__title')[0])

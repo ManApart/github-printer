@@ -74,6 +74,10 @@ div {
     font-size: 20px;
     font-weight: bold;
 }
+.cardID a {
+    color: black;
+    text-decoration: none;
+}
 .epic {
     font-style: oblique;
 }
@@ -86,6 +90,8 @@ div {
 
 .description {
     padding: 8px;
+    max-height: 150px;
+    overflow: hidden;
 }
 
 .card {

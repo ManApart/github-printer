@@ -12,7 +12,7 @@ var sampleCards = [{
     estimate: "",
     feature: "Data Platform 2.2",
     labels: ["spike"],
-    number: "#42",
+    number: "42",
     repoName: "project",
     sprint: "Sprint 54",
     title: "Presto SQL Injection"
@@ -22,7 +22,7 @@ var sampleCards = [{
     estimate: "1",
     feature: "Data Platform 2.2",
     labels: [],
-    number: "#4",
+    number: "4",
     repoName: "charts",
     sprint: "Sprint 54",
     title: "Move reaper chart to charts repo"
@@ -32,7 +32,7 @@ var sampleCards = [{
     estimate: "1",
     feature: "Data Platform 2.2",
     labels: [],
-    number: "#5",
+    number: "5",
     repoName: "charts",
     sprint: "Sprint 54",
     title: "Move valkyrie chart to charts repo"
