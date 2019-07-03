@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(cards)
 
         document.body.innerHTML = cards.map(createDiv).join("");
-        // document.body.innerHTML = cards.map(createDiv);
     });
 
 })
@@ -13,12 +12,12 @@ document.addEventListener('DOMContentLoaded', function () {
 function createDiv(card) {
     var cardType;
 
-   if (card.labels.includes("spike")) {
-       cardType = "spike";
-   } else if (card.labels.includes("bug")) {
-       cardType = "bug";
+    if (card.labels.includes("spike")) {
+        cardType = "spike";
+    } else if (card.labels.includes("bug")) {
+        cardType = "bug";
     } else if (card.labels.includes("forecast")) {
-       cardType = "forecast";
+        cardType = "forecast";
     } else if (card.labels.includes("Epic")) {
         cardType = "epic";
     } else {
@@ -26,7 +25,7 @@ function createDiv(card) {
     }
 
     var theCard = `<div class='card'>`;
-    
+
     switch (cardType) {
         case "spike":
             theCard += `<div class='headerSpike'>`;
@@ -74,7 +73,7 @@ function createDiv(card) {
 
     theCard += `</div>` // header
     theCard += `<div class='title'>${card.title}</div>`;
-    theCard += `<div class='description'>Someday a nifty description will go right here!</div>`
+    theCard += `<div class='description'>${card.description}</div>`
     theCard += `</div>` // card
 
     return theCard;

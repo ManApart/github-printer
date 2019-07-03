@@ -1,10 +1,7 @@
 addPrintButton = function () {
-    console.log("insert action");
-
     var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" >Print</button>`
 
     var menuBar = document.getElementsByClassName('hx_reponav')[0]
-    console.log(menuBar)
     menuBar.innerHTML = menuBar.innerHTML + printButtonText
 
     var printButton = document.getElementById("print-button")
@@ -15,16 +12,15 @@ addPrintButton = function () {
 }
 
 updateAndPrint = function () {
-    var cards = updateCards()
+    var cards = getUpdatedCards()
     if (cards.length > 0) {
-        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) {
-        });
+        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) { });
     } else {
         alert('No cards to print!')
     }
 }
 
-updateCards = function () {
+getUpdatedCards = function () {
     activeCardDivs = getActiveCards()
     cardProps = activeCardDivs.map(getCardProperties)
     console.log(cardProps)
@@ -37,6 +33,7 @@ getActiveCards = function () {
 
 getCardProperties = function (cardHtml) {
     card = {}
+    card.owner = getInnerText(document.getElementsByClassName('author')[0])
     card.title = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-title')[0])
     card.number = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-number')[0])
     card.repoName = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__repo-name')[0])
