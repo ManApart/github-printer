@@ -50,8 +50,8 @@ function createDiv(card) {
     }
 
     theCard += `<div class='cardID'><a href="https://github.com/${card.owner}/${card.repoName}/issues/${card.number}" target="_blank">${card.repoName} #${card.number}</a></div>`;
-    theCard += `<div class='epic'>Epic: ${card.epic}</div>`;
-    theCard += `<div class='labels'>Labels: ${card.labels}</div>`;
+    theCard += `<div class='epic'>${card.owner}: ${card.epic}</div>`;
+    theCard += `<div class='labels'>${card.labels}</div>`;
 
     switch (cardType) {
         case "spike":
@@ -72,9 +72,10 @@ function createDiv(card) {
     }
 
     theCard += `</div>` // header
+    theCard += `<div class='descriptionArea'>`;
     theCard += `<div class='title'>${card.title}</div>`;
     theCard += `<div class='description'>${card.description.replace(/\n/g, "<br/>")}</div>`
-    theCard += `</div>` // card
+    theCard += `</div></div>` // main, card
 
     return theCard;
 }
