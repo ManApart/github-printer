@@ -74,7 +74,7 @@ function createDiv(card) {
     theCard += `</div>` // header
     theCard += `<div class='descriptionArea'>`;
     theCard += `<div class='title'>${card.title}</div>`;
-    theCard += `<div class='description'>${card.description.replace(/\n/g, "<br/>")}</div>`
+    theCard += `<div class='description'>${card.description}</div>`
     theCard += `</div></div>` // main, card
 
     return theCard;

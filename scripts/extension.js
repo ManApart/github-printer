@@ -3,11 +3,17 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.runtime.sendMessage({ "action": "print", "cards": sampleCards }, function (data) { });
     });
 
-});
+    document.getElementById('setKey').addEventListener('click', function () {
+        let inputKey = document.getElementById("keyInput").value
+        document.getElementById("keyInput").value = ""
+        chrome.storage.sync.set({ apiKey: inputKey }, function () { })
+    });
 
+});
 
 var sampleCards = [{
     owner: "smartcitiesdata",
+    description: "",
     epic: "Core Enhancements",
     estimate: "",
     feature: "Data Platform 2.2",
@@ -18,6 +24,7 @@ var sampleCards = [{
     title: "Presto SQL Injection"
 }, {
     owner: "smartcitiesdata",
+    description: "",
     epic: "Open Source",
     estimate: "1",
     feature: "Data Platform 2.2",
@@ -27,13 +34,14 @@ var sampleCards = [{
     sprint: "Sprint 54",
     title: "Move reaper chart to charts repo"
 }, {
-    owner: "smartcitiesdata",
+    owner: "smartcolumbusos",
+    description: "",
     epic: "Open Source",
     estimate: "1",
     feature: "Data Platform 2.2",
     labels: [],
-    number: "5",
-    repoName: "charts",
+    number: "44",
+    repoName: "scosopedia",
     sprint: "Sprint 54",
     title: "Move valkyrie chart to charts repo"
 }]
