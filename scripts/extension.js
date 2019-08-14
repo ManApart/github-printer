@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.sync.set({ apiKey: inputKey }, function () { })
     });
 
+    document.getElementById('setOrgs').addEventListener('click', function () {
+        let orgsInput = document.getElementById("orgsInput").value
+        document.getElementById("orgsInput").value = ""
+        chrome.storage.sync.set({ orgs: orgsInput.split(',') }, function () { })
+    });
+
 });
 
 var sampleCards = [{
