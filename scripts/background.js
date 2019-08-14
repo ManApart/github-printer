@@ -26,11 +26,44 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 addDescriptions = function (cards, apiKey, orgs) {
     // var promises = [cardDescription(cards[0], apiKey, orgs)]
-    var promises = cards.map(card => new Promise((resolve, reject) => { cardDescription(resolve, reject, card, apiKey, orgs) }))
+    var promises = [new Promise((resolve, reject) => { cardDescription1(resolve, reject, cards[0], apiKey, orgs) })]
+    // var promises = cards.map(card => new Promise((resolve, reject) => { cardDescription1(resolve, reject, card, apiKey, orgs) }))
     return Promise.all(promises)
         .catch((err) => {
             throw err
         })
+}
+
+cardDescription1 = async function (resolve, reject, card, apiKey, orgs) {
+    const cleanedOrgs = cleanOrgs(card.owner, orgs)
+    cardDescription2(resolve, reject, card, apiKey, cleanedOrgs)
+}
+
+cardDescription2 = function (resolve, reject, card, apiKey, cleanedOrgs) {
+    console.log('calling cardDescription with orgs ' + cleanedOrgs)
+    if (cleanedOrgs.length > 0) {
+        const org = cleanedOrgs.pop()
+
+        console.log('attempt call')
+        // attemptCardCall(org, card, apiKey)
+        makeCardCall(org, card, apiKey)
+            .then(description => {
+                if (description) {
+                    card.description = description
+                    console.log('break loop')
+                    resolve(card)
+                } else {
+                    console.log('no description')
+                    cardDescription2(resolve, reject, card, apiKey, cleanedOrgs)
+                }
+            }).catch((err) => {
+                cardDescription2(resolve, reject, card, apiKey, cleanedOrgs)
+            })
+
+    } else {
+        console.log(card)
+        reject("Error Fetching card description after trying " + cleanedOrgs)
+    }
 }
 
 cardDescription = async function (resolve, reject, card, apiKey, orgs) {
@@ -81,6 +114,7 @@ attemptCardCall = async function (org, card, apiKey) {
 }
 
 makeCardCall = async function (org, card, apiKey) {
+    console.log('making call')
     var response = await fetch(`https://api.github.com/repos/${org}/${card.repoName}/issues/${card.number}`, {
         headers: {
             "Authorization": `Bearer ${apiKey}`
