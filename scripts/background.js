@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         chrome.storage.sync.get('apiKey', function (data) {
             chrome.storage.sync.get('orgs', function (orgData) {
                 if (data.apiKey) {
-                    addDescriptions(cards, data.apiKey, data.orgs).then(function (cards) {
+                    addDescriptions(cards, data.apiKey, orgData.orgs).then(function (cards) {
                         console.log('returning cards')
                         chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
                     }).catch(function (err) {
@@ -20,35 +20,36 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 }
             });
         });
-    } else {
-        console.log(request)
     }
     sendResponse(cards);
 });
 
 addDescriptions = function (cards, apiKey, orgs) {
-    var promises = [cardDescription(cards[0], apiKey, orgs)]
-    // var promises = cards.map(card => cardDescription(card, apiKey))
+    // var promises = [cardDescription(cards[0], apiKey, orgs)]
+    var promises = cards.map(card => new Promise((resolve, reject) => { cardDescription(resolve, reject, card, apiKey, orgs) }))
     return Promise.all(promises)
+        .catch((err) => {
+            throw err
+        })
 }
 
-cardDescription = async function (card, apiKey, orgs) {
-    console.log('start loop')
-    let cleanedOrgs = cleanOrgs(card.owner, orgs)
-    console.log('cleaned orgs: ' + cleanedOrgs)
-    for (let org of cleanedOrgs) {
-        let description = await attemptCardCall(org, card, apiKey)
+cardDescription = async function (resolve, reject, card, apiKey, orgs) {
+    const cleanedOrgs = cleanOrgs(card.owner, orgs)
+    console.log('starting loop')
+
+    for (const org of cleanedOrgs) {
+        console.log('attempt call')
+        const description = await attemptCardCall(org, card, apiKey)
         if (description) {
             card.description = description
-            console.log('resolve card ' + description)
-            return card
+            console.log('break loop')
+            resolve(card)
+            break
         }
     }
 
-    let errorText = "Error Fetching card description for card"
-    console.log(errorText)
     console.log(card)
-    throw errorText
+    reject("Error Fetching card description after trying " + cleanedOrgs)
 }
 
 //Move the card's owner to the front of the list so it is tried first
@@ -60,15 +61,16 @@ cleanOrgs = function (org, otherOrgs) {
                 break
             }
         }
-        arguments.unshift(org)
+        otherOrgs.unshift(org)
+        return otherOrgs
     } else {
         return [org]
     }
 }
 
 attemptCardCall = async function (org, card, apiKey) {
+    console.log('calling ' + org + ":" + card.repoName + ":" + card.number)
     try {
-        console.log('trying card for org ' + org)
         let result = await makeCardCall(org, card, apiKey)
         return result
     }
@@ -79,45 +81,18 @@ attemptCardCall = async function (org, card, apiKey) {
 }
 
 makeCardCall = async function (org, card, apiKey) {
-    console.log('Starting make call')
     var response = await fetch(`https://api.github.com/repos/${org}/${card.repoName}/issues/${card.number}`, {
         headers: {
             "Authorization": `Bearer ${apiKey}`
         }
     });
 
-    console.log('parsing response')
     var result = await response.json().then(function (data) {
-        console.log('parsed ' + data)
         if (data.body) {
             return data.body.replace(/\n/g, "<br/>")
         }
         return ""
     })
 
-    console.log('parsed result' + result)
     return result
 }
-
-
-// cardDescription = function (card, apiKey) {
-//     return new Promise(function (resolve, reject) {
-//         fetch(`https://api.github.com/repos/${card.owner}/${card.repoName}/issues/${card.number}`, {
-//             headers: {
-//                 "Authorization": `Bearer ${apiKey}`
-//             }
-//         }).then(function (response) {
-//             response.json().then(function (data) {
-//                 if (data.body) {
-//                     card.description = data.body.replace(/\n/g, "<br/>")
-//                 }
-//                 resolve(card)
-//             })
-//         }).catch(function (err) {
-//             console.log('Error Fetching card description for card')
-//             console.log(card)
-//             console.log(err)
-//             throw err
-//         });
-//     })
-// }
