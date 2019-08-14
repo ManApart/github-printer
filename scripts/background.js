@@ -26,63 +26,28 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 addDescriptions = function (cards, apiKey, orgs) {
     // var promises = [cardDescription(cards[0], apiKey, orgs)]
-    var promises = [new Promise((resolve, reject) => { cardDescription1(resolve, reject, cards[0], apiKey, orgs) })]
-    // var promises = cards.map(card => new Promise((resolve, reject) => { cardDescription1(resolve, reject, card, apiKey, orgs) }))
+    var promises = cards.map(card => cardDescription(card, apiKey, orgs))
     return Promise.all(promises)
         .catch((err) => {
             throw err
         })
 }
 
-cardDescription1 = async function (resolve, reject, card, apiKey, orgs) {
+cardDescription = async function (card, apiKey, orgs) {
     const cleanedOrgs = cleanOrgs(card.owner, orgs)
-    cardDescription2(resolve, reject, card, apiKey, cleanedOrgs)
-}
-
-cardDescription2 = function (resolve, reject, card, apiKey, cleanedOrgs) {
-    console.log('calling cardDescription with orgs ' + cleanedOrgs)
-    if (cleanedOrgs.length > 0) {
-        const org = cleanedOrgs.pop()
-
-        console.log('attempt call')
-        // attemptCardCall(org, card, apiKey)
-        makeCardCall(org, card, apiKey)
+    console.log('cleaned orgs: ' + cleanedOrgs)
+    return new Promise((resolve, reject) => {
+        cardDescriptionRecursive(card, apiKey, cleanedOrgs)
             .then(description => {
                 if (description) {
                     card.description = description
-                    console.log('break loop')
+                    console.log('found description ' + description)
                     resolve(card)
-                } else {
-                    console.log('no description')
-                    cardDescription2(resolve, reject, card, apiKey, cleanedOrgs)
                 }
             }).catch((err) => {
-                cardDescription2(resolve, reject, card, apiKey, cleanedOrgs)
+                reject(err)
             })
-
-    } else {
-        console.log(card)
-        reject("Error Fetching card description after trying " + cleanedOrgs)
-    }
-}
-
-cardDescription = async function (resolve, reject, card, apiKey, orgs) {
-    const cleanedOrgs = cleanOrgs(card.owner, orgs)
-    console.log('starting loop')
-
-    for (const org of cleanedOrgs) {
-        console.log('attempt call')
-        const description = await attemptCardCall(org, card, apiKey)
-        if (description) {
-            card.description = description
-            console.log('break loop')
-            resolve(card)
-            break
-        }
-    }
-
-    console.log(card)
-    reject("Error Fetching card description after trying " + cleanedOrgs)
+    })
 }
 
 //Move the card's owner to the front of the list so it is tried first
@@ -101,20 +66,34 @@ cleanOrgs = function (org, otherOrgs) {
     }
 }
 
-attemptCardCall = async function (org, card, apiKey) {
-    console.log('calling ' + org + ":" + card.repoName + ":" + card.number)
-    try {
-        let result = await makeCardCall(org, card, apiKey)
-        return result
-    }
-    catch (error) {
-        console.error(error);
-        return null
-    }
+cardDescriptionRecursive = function (card, apiKey, cleanedOrgs) {
+    return new Promise((resolve, reject) => {
+        if (cleanedOrgs.length > 0) {
+            const org = cleanedOrgs.pop()
+
+            console.log('attempting  ' + org + ":" + card.repoName + ":" + card.number)
+
+            makeCardCall(org, card, apiKey)
+                .then(description => {
+                    if (description) {
+                        console.log('found description ' + description)
+                        resolve(description)
+                    } else {
+                        console.log('No description for ' + org + ":" + card.repoName + ":" + card.number)
+                        return cardDescriptionRecursive(card, apiKey, cleanedOrgs)
+                    }
+                }).catch((err) => {
+                    console.log('Got error for ' + org + ":" + card.repoName + ":" + card.number)
+                    // return cardDescriptionRecursive(card, apiKey, cleanedOrgs)
+                })
+        } else {
+            console.log(card)
+            reject("Error Fetching card description after trying all orgs")
+        }
+    })
 }
 
 makeCardCall = async function (org, card, apiKey) {
-    console.log('making call')
     var response = await fetch(`https://api.github.com/repos/${org}/${card.repoName}/issues/${card.number}`, {
         headers: {
             "Authorization": `Bearer ${apiKey}`
