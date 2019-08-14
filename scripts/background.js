@@ -35,15 +35,11 @@ addDescriptions = function (cards, apiKey, orgs) {
 
 cardDescription = function (card, apiKey, orgs) {
     const cleanedOrgs = cleanOrgs(card.owner, orgs)
-    console.log('cleaned orgs: ' + cleanedOrgs)
     return new Promise((resolve, reject) => {
         const promises = cleanedOrgs.map(org => makeCardCall(org, card, apiKey))
         Promise.all(promises).then((results) => {
             const description = results.find(element => { return element && element.length > 0 })
-            console.log(results)
-            console.log(description)
             if (description) {
-                console.log('found description ' + description)
                 card.description = description
             }
             resolve(card)
