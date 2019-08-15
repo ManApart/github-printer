@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('setOrgs').addEventListener('click', function () {
         let orgsInput = document.getElementById("orgsInput").value
         document.getElementById("orgsInput").value = ""
-        chrome.storage.sync.set({ orgs: orgsInput.split(',') }, function () { })
+        chrome.storage.sync.set({ orgs: orgsInput.split(',').map(org => org.toLowerCase()) }, function () { })
     });
 
 });

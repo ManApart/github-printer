@@ -40,7 +40,7 @@ getCardProperties = function (cardHtml) {
     }
 
     card = {}
-    card.owner = getInnerText(document.getElementsByClassName('author')[0])
+    card.owner = getInnerText(document.getElementsByClassName('author')[0]).toLowerCase()
     card.title = getInnerText(cardHtml.getElementsByClassName('zhc-issue-card__issue-title')[0])
     card.description = ""
     card.number = numberText
