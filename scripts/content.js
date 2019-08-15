@@ -2,13 +2,15 @@ addPrintButton = function () {
     var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" >Print</button>`
 
     var menuBar = document.getElementsByClassName('hx_reponav')[0]
-    menuBar.innerHTML = menuBar.innerHTML + printButtonText
+    if (menuBar) {
+        menuBar.innerHTML = menuBar.innerHTML + printButtonText
 
-    var printButton = document.getElementById("print-button")
+        var printButton = document.getElementById("print-button")
 
-    printButton.addEventListener('click', function () {
-        updateAndPrint()
-    });
+        printButton.addEventListener('click', function () {
+            updateAndPrint()
+        });
+    }
 }
 
 updateAndPrint = function () {

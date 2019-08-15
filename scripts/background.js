@@ -40,6 +40,9 @@ cardDescription = function (card, apiKey, orgs) {
         Promise.all(promises).then((results) => {
             const description = results.find(element => { return element && element.length > 0 })
             if (description) {
+                const index = results.indexOf(description)
+                const owner = cleanedOrgs[index]
+                card.owner = owner
                 card.description = description
             }
             resolve(card)
@@ -50,14 +53,15 @@ cardDescription = function (card, apiKey, orgs) {
 //Move the card's owner to the front of the list so it is tried first
 cleanOrgs = function (org, otherOrgs) {
     if (otherOrgs) {
-        for (var i = otherOrgs.length - 1; i >= 0; i--) {
-            if (otherOrgs[i] === org) {
-                otherOrgs.splice(i, 1)
+        orgs = otherOrgs.slice()
+        for (var i = orgs.length - 1; i >= 0; i--) {
+            if (orgs[i] === org) {
+                orgs.splice(i, 1)
                 break
             }
         }
-        otherOrgs.unshift(org)
-        return otherOrgs
+        orgs.unshift(org)
+        return orgs
     } else {
         return [org]
     }
