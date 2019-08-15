@@ -26,60 +26,82 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 addDescriptions = function (cards, apiKey, orgs) {
     // var promises = [cardDescription(cards[0], apiKey, orgs)]
-    var promises = cards.map(card => cardDescription(card, apiKey, orgs))
+    var promises = cards.map(card => new Promise((resolve, reject) => { cardDescription(resolve, reject, card, apiKey, orgs) }))
     return Promise.all(promises)
         .catch((err) => {
             throw err
         })
 }
 
-cardDescription = function (card, apiKey, orgs) {
+cardDescription = async function (resolve, reject, card, apiKey, orgs) {
+
     const cleanedOrgs = cleanOrgs(card.owner, orgs)
-    return new Promise((resolve, reject) => {
-        const promises = cleanedOrgs.map(org => makeCardCall(org, card, apiKey))
-        Promise.all(promises).then((results) => {
-            const description = results.find(element => { return element && element.length > 0 })
-            if (description) {
-                const index = results.indexOf(description)
-                const owner = cleanedOrgs[index]
-                card.owner = owner
-                card.description = description
-            }
+    console.log('starting loop')
+
+    for (const org of cleanedOrgs) {
+        console.log('attempt org call for  ' + org + ":" + card.repoName + ":" + card.number)
+        const description = await attemptCardCall(org, card, apiKey)
+        console.log('attempt over ' + description)
+        if (description != undefined) {
+            card.description = description
+            console.log('break loop')
             resolve(card)
-        })
-    })
+            break
+        } else {
+            console.log('nope')
+        }
+    }
+
+    console.log(card)
+    reject("Error Fetching card description after trying " + cleanedOrgs)
 }
 
 //Move the card's owner to the front of the list so it is tried first
 cleanOrgs = function (org, otherOrgs) {
     if (otherOrgs) {
-        orgs = otherOrgs.slice()
-        for (var i = orgs.length - 1; i >= 0; i--) {
-            if (orgs[i] === org) {
-                orgs.splice(i, 1)
+        for (var i = otherOrgs.length - 1; i >= 0; i--) {
+            if (otherOrgs[i] === org) {
+                otherOrgs.splice(i, 1)
                 break
             }
         }
-        orgs.unshift(org)
-        return orgs
+        otherOrgs.unshift(org)
+        return otherOrgs
     } else {
         return [org]
     }
 }
 
-makeCardCall = function (org, card, apiKey) {
-    return new Promise((resolve, reject) => {
-        fetch(`https://api.github.com/repos/${org}/${card.repoName}/issues/${card.number}`, {
-            headers: {
-                "Authorization": `Bearer ${apiKey}`
+attemptCardCall = async function (org, card, apiKey) {
+    console.log('calling ' + org + ":" + card.repoName + ":" + card.number)
+    try {
+        let result = await makeCardCall(org, card, apiKey)
+        return result
+    }
+    catch (error) {
+        console.error(error);
+        return undefined
+    }
+}
+
+makeCardCall = async function (org, card, apiKey) {
+    var response = await fetch(`https://api.github.com/repos/${org}/${card.repoName}/issues/${card.number}`, {
+        headers: {
+            "Authorization": `Bearer ${apiKey}`
+        }
+    });
+
+    var result = await response.json().then(function (data) {
+        console.log('data: ')
+        console.log(data)
+        if (data.id) {
+            if (data.body) {
+                return data.body.replace(/\n/g, "<br/>")
             }
-        }).then(response => {
-            response.json().then(function (data) {
-                if (data.body) {
-                    resolve(data.body.replace(/\n/g, "<br/>"))
-                }
-                resolve("")
-            })
-        })
+            return ""
+        }
+        return undefined
     })
+
+    return result
 }
