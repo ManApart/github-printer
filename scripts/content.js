@@ -1,5 +1,5 @@
 addPrintButton = function () {
-    var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" >Print</button>`
+    var printButtonText = ` <button id="print-button" class="js-selected-navigation-item reponav-item" style="background:white;" >Print</button>`
 
     var menuBar = document.getElementsByClassName('hx_reponav')[0]
     if (menuBar) {
@@ -8,7 +8,9 @@ addPrintButton = function () {
         var printButton = document.getElementById("print-button")
 
         printButton.addEventListener('click', function () {
+            printButton.style = "background:lightgray;";
             updateAndPrint()
+            setTimeout(() => { printButton.style = "background:white;"; }, 3000);
         });
     }
 }
@@ -16,7 +18,7 @@ addPrintButton = function () {
 updateAndPrint = function () {
     var cards = getUpdatedCards()
     if (cards.length > 0) {
-        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, function (data) { });
+        chrome.runtime.sendMessage({ "action": "print", "cards": cards }, (data) => { });
     } else {
         alert('No cards to print!')
     }

@@ -14,6 +14,5 @@ If you have more than one org on a single board, you need to add ALL your orgs b
 ## TODO
 
 - Make work on zenhub page without zenhub plugin
-- Print button instant feedback / loading?
 - Display markdown
 - Error handling

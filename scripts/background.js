@@ -3,13 +3,13 @@ var cards = []
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "print") {
         cards = request.cards
-        chrome.storage.sync.get('apiKey', function (data) {
-            chrome.storage.sync.get('orgs', function (orgData) {
+        chrome.storage.sync.get('apiKey', (data) => {
+            chrome.storage.sync.get('orgs', (orgData) => {
                 if (data.apiKey) {
-                    addDescriptions(cards, data.apiKey, orgData.orgs).then(function (cards) {
+                    addDescriptions(cards, data.apiKey, orgData.orgs).then((cards) => {
                         console.log('returning cards')
                         chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
-                    }).catch(function (err) {
+                    }).catch((err) => {
                         alert('Error Fetching card descriptions!')
                         console.log(err)
                         chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
@@ -78,7 +78,7 @@ makeCardCall = async function (org, card, apiKey) {
         }
     });
 
-    var result = await response.json().then(function (data) {
+    var result = await response.json().then((data) => {
         if (data.id) {
             if (data.body) {
                 return data.body.replace(/\n/g, "<br/>")
