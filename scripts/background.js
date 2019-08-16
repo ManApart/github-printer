@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         console.log('returning cards')
                         chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
                     }).catch((err) => {
-                        alert('Error Fetching card descriptions!')
+                        alert('Couldn\'t fetch all cards:\n' + err)
                         console.log(err)
                         chrome.tabs.create({ url: chrome.extension.getURL("print_view.html") });
                     });
@@ -50,7 +50,7 @@ cardDescription = async function (resolve, reject, card, apiKey, orgs) {
 
     if (!foundDescription) {
         console.log(card)
-        reject("Error Fetching card description after trying " + cleanedOrgs)
+        reject("Error Fetching description for " + card.repoName + ":" + card.number + " after trying orgs: " + cleanedOrgs)
     }
 }
 
