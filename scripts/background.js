@@ -25,7 +25,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 addDescriptions = function (cards, apiKey, orgs) {
     // var promises = [cardDescription(cards[0], apiKey, orgs)]
-    var promises = cards.map(card => new Promise((resolve, reject) => { cardDescription(resolve, reject, card, apiKey, orgs) }))
+    var promises = cards.map(card => new Promise((resolve, reject) => {
+        if (card.description) {
+            resolve(card)
+        } else {
+            cardDescription(resolve, reject, card, apiKey, orgs)
+        }
+    }))
     return Promise.all(promises)
         .catch((err) => {
             throw err
