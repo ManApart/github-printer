@@ -70,14 +70,12 @@ getZenhubCardProperties = function (cardHtml) {
 getGithubCardProperties = function (cardHtml) {
     urlParts = document.URL.substr(19, document.URL.length).split("/")
 
-    var numberText = urlParts[3]
-    if (numberText.length > 1) {
-        numberText = numberText.substr(1, numberText.length - 1)
-    }
-
-    var epicText = getInnerText(cardHtml.getElementsByClassName('sidebar-zh-epic')[0].children[0].children[1])
-    if (epicText == "Not inside an Epic") {
-        epicText = ""
+    epicText = ""
+    if (cardHtml.getElementsByClassName('sidebar-zh-epic')[0]) {
+        epicText = getInnerText(cardHtml.getElementsByClassName('sidebar-zh-epic')[0].children[0].children[1])
+        if (epicText == "Not inside an Epic") {
+            epicText = ""
+        }
     }
 
     var labelTexts = Array.prototype.slice.call(cardHtml.getElementsByClassName('js-issue-labels')).map(getInnerText)
@@ -89,7 +87,7 @@ getGithubCardProperties = function (cardHtml) {
     card.owner = urlParts[0]
     card.title = getInnerText(cardHtml.getElementsByClassName('gh-header-title')[0].children[0])
     card.description = getInnerText(cardHtml.getElementsByClassName('comment-body')[0]).replace(/\n/g, "<br/>")
-    card.number = numberText
+    card.number = urlParts[3]
     card.repoName = urlParts[1]
     card.estimate = getInnerText(cardHtml.getElementsByClassName('js-zh-estimate-infobar-item-wrapper')[0])
     card.sprint = getInnerText(cardHtml.getElementsByClassName('milestone-name ')[0])
